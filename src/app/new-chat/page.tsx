@@ -43,7 +43,7 @@ function page() {
                     <span className="w-full mt-4 lg:mt-2 font-bold flex justify-start items-center gap-2 text-red-500 cursor-pointer" onClick={logout}><CiLogout />Logout</span>
                 </div>
 
-                <div className="h-56 w-56 lg:h-72 lg:w-96 absolute z-10 -top-24 -right-20 lg:-top-56 lg:-right-16 opacity-40 rounded-full bg-orange-400 blur-[120px]"></div>
+                <div className="h-56 w-56 lg:h-72 lg:w-[500px] absolute z-10 -top-24 -right-20 lg:-top-56 lg:-right-16 opacity-40 rounded-full bg-orange-400 blur-[120px]"></div>
 
                 <h1 className=" font-black z-30 text-2xl md:py-10 py-5 bg-gradient-to-br from-orange-300 via-orange-700 to-transparent bg-clip-text text-transparent">SPARK</h1>
 
