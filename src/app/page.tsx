@@ -1,17 +1,20 @@
 'use client'
 
-import Link from "next/link"
 import { homeSuggestionPrompt } from "@/data/homeSuggestion"
 import { IoSparklesSharp } from "react-icons/io5";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function page() {
 
-  const[prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async () => {
     try {
-      
+
+      const chatId = encodeURIComponent(prompt);
+      router.push(`/chat/${chatId}`);
     } catch (err) {
       console.log(err);
     }
@@ -32,7 +35,7 @@ function page() {
           <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} placeholder="Enter your prompt" className="text-white outline-none w-full font-mono h-52 rounded-md lg:rounded-lg bg-zinc-900 px-3 pr-10 py-3" />
           <p className="text-white text-[12px] opacity-70 w-full text-center py-3">Or</p>
 
-          <span className={`p-2 lg:p-3 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 right-3 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`}><IoSparklesSharp /></span>
+          <span className={`p-2 lg:p-3 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 right-3 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`} onClick={handleSubmit}><IoSparklesSharp /></span>
         </div>
 
         <div className="w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3">
