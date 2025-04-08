@@ -45,11 +45,11 @@ function page() {
       <div className="w-full h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative">
         <Toaster richColors position="top-center" />
 
-        <div className="h-56 w-56 lg:h-72 lg:w-96 absolute z-10 -top-24 -right-20 lg:-top-56 lg:-right-16 opacity-40 rounded-full bg-orange-400 blur-[120px]"></div>
+        <div className="h-56 w-56 lg:h-72 lg:w-[500px] absolute z-10 -top-24 -right-20 lg:-top-56 lg:-right-16 opacity-40 rounded-full bg-orange-400 blur-[120px]"></div>
 
         <h1 className=" font-black z-30 text-2xl md:py-10 py-5 bg-gradient-to-br from-orange-300 via-orange-700 to-transparent bg-clip-text text-transparent">SPARK</h1>
 
-        <p className="text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] font-bold border-orange-500">ChatGPT on Steroids</p>
+        <p className="text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] font-bold border-orange-500">Add a little spark to your coding journey</p>
 
         <div className="w-[90%] md:w-[50%] xl:w-[40%] mt-10 lg:mt-4 py-3 px-3 flex flex-col justify-center items-center gap-3 bg-zinc-900 rounded-md lg:rounded-lg">
           <div className="w-full flex justify-between items-center gap-4">
