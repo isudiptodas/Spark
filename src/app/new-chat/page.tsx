@@ -6,12 +6,61 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSidebar } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
+import { useRef } from "react";
+import { Toaster, toast } from "sonner";
+import { MdKeyboardVoice } from "react-icons/md";
+import { FaRegStopCircle } from "react-icons/fa";
 
 function page() {
+  
+    type SpeechRecognition = any;
 
     const [prompt, setPrompt] = useState('');
     const router = useRouter();
     const [sidebarVisible, setSidebarVisible] = useState(false);
+    const [listening, setListening] = useState(false);
+    const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+    const startRecording = () => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            toast.error("Your browser does not support Speech Recognition.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = "en-US";
+
+        recognition.onresult = (event: any) => {
+            let interimTranscript = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    setPrompt(prev => prev + transcript + " ");
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+        };
+
+        recognition.onerror = (event: any) => {
+            console.error("Speech Recognition Error", event.error);
+        };
+
+        recognitionRef.current = recognition;
+        recognition.start();
+
+        setListening(true);
+    }
+
+    const stopRecording = () => {
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+          setListening(false);
+        }
+      };
 
     const handleSubmit = async () => {
         try {
@@ -30,7 +79,7 @@ function page() {
     return (
         <>
             <div className="w-full h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative">
-
+                <Toaster />
                 <span onClick={() => setSidebarVisible(!sidebarVisible)} className={`w-auto absolute text-white top-8 left-5 font-bold cursor-pointer`}><FiSidebar /> </span>
 
                 <div className={`w-[70%] px-5 ${sidebarVisible ? "translate-x-0" : "-translate-x-full"} lg:pb-5 duration-200 ease-in-out transition-transform left-0 sm:w-[50%] md:w-[40%] lg:w-[20%] absolute h-screen bg-zinc-950 z-50 flex flex-col justify-start items-start gap-2`}>
@@ -54,6 +103,8 @@ function page() {
                     <p className="text-white text-[12px] opacity-70 w-full text-center py-3">Or</p>
 
                     <span className={`p-2 lg:p-3 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 right-3 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`} onClick={handleSubmit}><IoSparklesSharp /></span>
+                    <span className={`p-2 lg:p-3 ${listening ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-fuchsia-400 text-white`} onClick={startRecording}><MdKeyboardVoice /></span>
+                    <span className={`p-2 lg:p-3 ${listening ? "block" : "hidden"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-red-500 text-white`} onClick={stopRecording}><FaRegStopCircle /></span>
                 </div>
 
                 <div className="w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3">
