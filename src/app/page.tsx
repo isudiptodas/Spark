@@ -84,7 +84,7 @@ function page() {
         email, password, action: 'login', name
       });
 
-      console.log(res.data);
+      //console.log(res.data);
 
       if (res.data.status === 200) {
         router.push('/new-chat');
