@@ -56,7 +56,7 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
                         <div className={`w-full h-full scrollbar-hide ${option === 'chat' ? "hidden" : "block"}`}>
                             <SandpackProvider theme={'dark'} template="react">
                                 <SandpackLayout className="h-[80vh] lg:h-[70vh] w-full lex flex-col scrollbar-hide">
-                                    {option === 'code' && <SandpackCodeEditor className={`h-full w-full`} showTabs closableTabs showLineNumbers={true} />}
+                                    {option === 'code' && <SandpackCodeEditor className={`h-full w-full`} showInlineErrors showTabs closableTabs showLineNumbers={true} />}
                                     {option === 'preview' && <SandpackPreview className={`h-full w-full`} />}
                                     {option === 'files' && <div className="h-full w-full flex">
                                         <SandpackFileExplorer className={`h-full w-full`} />
@@ -64,7 +64,7 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
 
                                     <div className={`hidden lg:flex h-full w-full`}>
                                         <SandpackFileExplorer className={`h-full w-[20%]`} />
-                                        <SandpackCodeEditor className={`h-full w-[70%] flex-none`} showTabs closableTabs showLineNumbers={true} />
+                                        <SandpackCodeEditor className={`h-full w-[70%] flex-none`} showInlineErrors showTabs closableTabs showLineNumbers={true} />
                                     </div>
                                 </SandpackLayout>
                             </SandpackProvider>
