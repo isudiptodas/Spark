@@ -88,6 +88,7 @@ function page() {
 
       if (res.data.status === 200) {
         router.push('/new-chat');
+        console.log(res.data);
       }
       else if (res.data.status === 404) {
         toast.error('User not found');
