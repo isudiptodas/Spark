@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
             const mailOptions = {
                 from: mail,
                 to: email,
-                subject: "OTP for recovering password",
+                subject: "Account Verification OTP",
                 text: `Your one-time password for account verification is ${otp}`,
             };
 
@@ -109,21 +109,21 @@ export async function POST(req: NextRequest) {
     else if (action === 'verify') {
 
         console.log(action);
-       
+
         try {
             const hashed = await bcrypt.hash(password, 10);
 
             const newUser = new User({
                 name, email, password: hashed
             });
-    
+
             await newUser.save();
-    
+
             return NextResponse.json({
                 status: 200,
                 message: "User registered"
             });
-    
+
         } catch (error) {
             return NextResponse.json({
                 status: 500,
@@ -132,4 +132,14 @@ export async function POST(req: NextRequest) {
         }
 
     }
+}
+
+export async function GET(req: NextRequest) {
+    const response = NextResponse.json({status: 200, message: 'user logged out'});
+    response.cookies.set('token', '', {
+        httpOnly: true,
+        expires: new Date(0),  
+        path: '/',            
+    });
+    return response;
 }
