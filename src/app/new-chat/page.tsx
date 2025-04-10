@@ -16,8 +16,10 @@ function page() {
     type SpeechRecognition = any;
 
     const [prompt, setPrompt] = useState('');
+    const [template, setTemplate] = useState('react');
     const router = useRouter();
     const [sidebarVisible, setSidebarVisible] = useState(false);
+    const [templateVisible, setTemplateVisible] = useState(false);
     const [listening, setListening] = useState(false);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -66,7 +68,7 @@ function page() {
         try {
 
             const chatId = encodeURIComponent(prompt);
-            router.push(`/chat/${chatId}`);
+            router.push(`/chat/${chatId}?template=${template}`);
         } catch (err) {
             console.log(err);
         }
