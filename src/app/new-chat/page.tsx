@@ -10,6 +10,7 @@ import { useRef } from "react";
 import { Toaster, toast } from "sonner";
 import { MdKeyboardVoice } from "react-icons/md";
 import { FaRegStopCircle } from "react-icons/fa";
+import axios from "axios";
 
 function page() {
   
@@ -74,8 +75,12 @@ function page() {
         }
     }
 
-    const logout = () => {
-        router.push('/');
+    const logout = async () => {
+        const res = await axios.get('/api/user');
+
+        if(res.data.status === 200){
+            router.push('/');
+        }
     }
 
     return (
