@@ -11,7 +11,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-
+import Link from "next/link";
 function page() {
 
   const [option, setOption] = useState('login');
@@ -84,7 +84,7 @@ function page() {
         email, password, action: 'login', name
       });
 
-      //console.log(res.data);
+      console.log(res.data);
 
       if (res.data.status === 200) {
         router.push('/new-chat');
@@ -172,6 +172,7 @@ function page() {
               <input onChange={(e) => setPassword(e.target.value)} type={visible ? "text" : "password"} className="w-full rounded-md bg-black px-3 py-2 text-white outline-none" placeholder="Enter password" />
               <span onClick={() => setVisible(!visible)} className="text-gray-500 absolute right-7 bottom-3">{visible ? <FaEye /> : <FaEyeSlash />}</span>
             </div>
+            <Link href='/forgot-password' className="w-full text-start text-[12px] cursor-pointer text-orange-400">Forgot password ?</Link>
 
             <p className="w-full py-2 text-center bg-orange-400 text-white cursor-pointer hover:opacity-75 duration-200 ease-in-out active:scale-95 rounded-md lg:rounded-lg" onClick={login}>{logging ? "Logging..." : "Enter"} </p>
           </div>
