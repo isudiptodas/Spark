@@ -7,15 +7,21 @@ import {
     SandpackPreview,
     SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { IoSparklesSharp } from "react-icons/io5";
-export default function Page({ params, }: { params: { chatId: string } }) {
+import { useRouter, useSearchParams } from "next/navigation";
+import { use } from "react";
 
-    const { chatId } = params
+export default function Page({ params, }: { params: Promise<{ chatId: string }> }) {
+
+    const { chatId } =  use(params);
     const question = decodeURIComponent(chatId);
     const [prompt, setPrompt] = useState('');
     const [option, setOption] = useState('preview');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const template = searchParams.get('template');
 
     return (
         <>
@@ -28,7 +34,7 @@ export default function Page({ params, }: { params: { chatId: string } }) {
 
                     <div className="hidden lg:flex bg-gradient-to-b from-zinc-950 via-zinc-950 to-transparent h-[77vh] rounded-md w-[30%] flex-col justify-between items-center gap-3 px-3 py-2 relative">
                         <Link href='/new-chat' className="w-full text-center py-2 rounded-md bg-white text-black cursor-pointer hover:opacity-70 duration-200 ease-in-out active:scale-95">New Chat +</Link>
-                        <textarea onChange={(e) => setPrompt(e.target.value)} className="w-full px-2 py-2 outline-none h-24 bg-zinc-800 rounded-md text-white" placeholder="Ask your question"/>
+                        <textarea onChange={(e) => setPrompt(e.target.value)} className="w-full px-2 py-2 outline-none h-24 bg-zinc-800 rounded-md text-white" placeholder="Ask your question" />
                         <span className={`p-2 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-sm bottom-5 right-5 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`}><IoSparklesSharp /></span>
                     </div>
 
