@@ -9,8 +9,8 @@ function page() {
 
                 <h1 className=" font-black z-30 text-2xl md:py-10 py-5 bg-gradient-to-br from-orange-300 via-orange-700 to-transparent bg-clip-text text-transparent">SPARK</h1>
                 
-                <p className="w-full text-white text-center font-bold text-xl">Oops ! Looks like you are not logged In :(</p>
-                <p className="w-full text-white text-center text-[12px]">Go back to Login Page</p>
+                <p className="w-full text-white text-center font-bold text-xl md:text-2xl lg:text-3xl">Oops ! Looks like you are not logged In :(</p>
+                <p className="w-full text-white text-center text-[12px] md:text-sm">Go back to Login Page</p>
                 <Link href='/' className="w-auto text-center px-4 py-1 text-[12px] lg:text-sm rounded-full cursor-pointer hover:opacity-75 duration-200 ease-in-out active:scale-95 text-white bg-orange-400">Login</Link>
             </div>
         </>
