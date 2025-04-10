@@ -1,5 +1,6 @@
 'use client'
 
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -17,11 +18,16 @@ function page() {
   const router = useRouter();
 
   const register = async () => {
+    
+    if (!email || !password || !name) {
+      toast.error("All fields are required");
+      return;
+    }
+
     try {
-      if (!email || !password || !name) {
-        toast.error("All fields are required");
-        return;
-      }
+      const res = await axios.post('/api/user', {
+        email, name, password, action: 'register'
+      });
     } catch (err) {
       console.log(err);
     }
