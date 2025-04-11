@@ -11,18 +11,60 @@ import { Toaster, toast } from "sonner";
 import { MdKeyboardVoice } from "react-icons/md";
 import { FaRegStopCircle } from "react-icons/fa";
 import axios from "axios";
+import { FaReact } from "react-icons/fa";
+import { SiSolid } from "react-icons/si";
+import { IoLogoHtml5 } from "react-icons/io5";
+import { FaJs } from "react-icons/fa";
+import { FaVuejs } from "react-icons/fa";
+import { SiSvelte } from "react-icons/si";
+import { RiAiGenerateText } from "react-icons/ri";
 
 function page() {
   
     type SpeechRecognition = any;
 
     const [prompt, setPrompt] = useState('');
-    const [template, setTemplate] = useState('react');
+    const [template, setTemplate] = useState('select template');
     const router = useRouter();
     const [sidebarVisible, setSidebarVisible] = useState(false);
     const [templateVisible, setTemplateVisible] = useState(false);
     const [listening, setListening] = useState(false);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+    const templates = [
+        {
+            name: 'react',
+            icon: <FaReact />
+        },
+        {
+            name: 'static',
+            icon: <IoLogoHtml5 />
+        },
+        {
+            name: 'angular',
+            icon: <FaReact />
+        },
+        {
+            name: 'solid',
+            icon: <SiSolid />
+        },
+        {
+            name: 'svelte',
+            icon: <SiSvelte />
+        },
+        {
+            name: 'vanilla',
+            icon: <FaJs />
+        },
+        {
+            name: 'vue',
+            icon: <FaVuejs />
+        },
+        {
+            name: 'Generate',
+            icon: <RiAiGenerateText />
+        },
+    ];
 
     const startRecording = () => {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -66,8 +108,18 @@ function page() {
       };
 
     const handleSubmit = async () => {
-        try {
 
+        if(template === 'select template'){
+            toast.error("Please select a template");
+            return;
+        }
+
+        if(!prompt){
+            toast.error("Please write a prompt");
+            return;
+        }
+
+        try {
             const chatId = encodeURIComponent(prompt);
             router.push(`/chat/${chatId}?template=${template}`);
         } catch (err) {
@@ -85,8 +137,8 @@ function page() {
 
     return (
         <>
-            <div className="w-full h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative">
-                <Toaster />
+            <div className={`w-full h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative`}>
+                <Toaster richColors position="top-center" />
                 <span onClick={() => setSidebarVisible(!sidebarVisible)} className={`w-auto absolute text-white top-8 left-5 font-bold cursor-pointer`}><FiSidebar /> </span>
 
                 <div className={`w-[70%] px-5 ${sidebarVisible ? "translate-x-0" : "-translate-x-full"} lg:pb-5 duration-200 ease-in-out transition-transform left-0 sm:w-[50%] md:w-[40%] lg:w-[20%] absolute h-screen bg-zinc-950 z-50 flex flex-col justify-start items-start gap-2`}>
@@ -106,12 +158,19 @@ function page() {
                 <p className="text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] border-orange-500">Start a new chat</p>
 
                 <div className="w-[80%] md:w-[60%] z-30 h-auto flex flex-col justify-center items-center relative rounded-md lg:rounded-lg mt-5">
-                    <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} placeholder="Enter your prompt" className="text-white outline-none w-full font-mono h-52 rounded-md lg:rounded-lg bg-zinc-900 px-3 pr-10 py-3" />
+                    <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} placeholder="Enter your prompt" className="text-white outline-none w-full font-mono h-52 overflow-y-auto rounded-md lg:rounded-lg bg-zinc-900 px-3 pr-10 pb-10 py-3" />
                     <p className="text-white text-[12px] opacity-70 w-full text-center py-3">Or</p>
 
+                    <p className={`bottom-14 ${prompt === '' ? "right-14" : "right-[100px]"} border-gray-400 text-white text-[10px] md:text-sm hover:bg-gray-700 duration-200 ease-in-out capitalize rounded-md absolute w-auto px-3 py-1 lg:py-2 border-[1px] cursor-pointer `} onClick={() => setTemplateVisible(!templateVisible)}>{template}</p>
                     <span className={`p-2 lg:p-3 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 right-3 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`} onClick={handleSubmit}><IoSparklesSharp /></span>
                     <span className={`p-2 lg:p-3 ${listening ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-fuchsia-400 text-white`} onClick={startRecording}><MdKeyboardVoice /></span>
                     <span className={`p-2 lg:p-3 ${listening ? "block" : "hidden"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-red-500 text-white`} onClick={stopRecording}><FaRegStopCircle /></span>
+
+                    <div className={`w-52 ${templateVisible ? "block" : "hidden"} px-1 py-1 absolute flex flex-col lg:w-auto lg:flex-row justify-start items-start -bottom-64 lg:-bottom-4 right-0 h-auto bg-zinc-800 rounded-md`}>
+                        {templates.map((temp, index)=> {
+                            return <p key={index} className="w-full px-3 flex justify-start text-[12px] lg:text-sm items-center gap-2 text-white cursor-pointer py-2 hover:bg-gray-600 duration-200 ease-in-out text-start rounded-md" onClick={() => {setTemplate(temp.name); setTemplateVisible(!templateVisible)}}>{temp.icon}{temp.name}</p>
+                        })}
+                    </div>
                 </div>
 
                 <div className="w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3">
