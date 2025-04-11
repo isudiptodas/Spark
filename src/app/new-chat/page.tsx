@@ -1,6 +1,7 @@
 'use client'
 
 import { homeSuggestionPrompt } from "@/data/homeSuggestion"
+import { homeSuggestionTasks } from "@/data/homeSuggestion";
 import { IoSparklesSharp } from "react-icons/io5";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,13 +18,13 @@ import { IoLogoHtml5 } from "react-icons/io5";
 import { FaJs } from "react-icons/fa";
 import { FaVuejs } from "react-icons/fa";
 import { SiSvelte } from "react-icons/si";
-import { RiAiGenerateText } from "react-icons/ri";
 
 function page() {
   
     type SpeechRecognition = any;
 
     const [prompt, setPrompt] = useState('');
+    const[option, setOption] = useState('');
     const [template, setTemplate] = useState('select template');
     const router = useRouter();
     const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -59,10 +60,6 @@ function page() {
         {
             name: 'vue',
             icon: <FaVuejs />
-        },
-        {
-            name: 'Generate',
-            icon: <RiAiGenerateText />
         },
     ];
 
@@ -109,7 +106,7 @@ function page() {
 
     const handleSubmit = async () => {
 
-        if(template === 'select template'){
+        if(option === 'programming' && template === 'select template'){
             toast.error("Please select a template");
             return;
         }
@@ -120,8 +117,15 @@ function page() {
         }
 
         try {
-            const chatId = encodeURIComponent(prompt);
-            router.push(`/chat/${chatId}?template=${template}`);
+            
+            if(option === 'programming'){
+                const chatId = encodeURIComponent(prompt);
+                router.push(`/chat/${chatId}?template=${template}`);
+            }
+            else{
+                const taskId = encodeURIComponent(prompt);
+                router.push(`/task/${taskId}`);
+            }
         } catch (err) {
             console.log(err);
         }
@@ -137,7 +141,7 @@ function page() {
 
     return (
         <>
-            <div className={`w-full h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative`}>
+            <div className={`w-full min-h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative scrollbar-hide pb-16`}>
                 <Toaster richColors position="top-center" />
                 <span onClick={() => setSidebarVisible(!sidebarVisible)} className={`w-auto absolute text-white top-8 left-5 font-bold cursor-pointer`}><FiSidebar /> </span>
 
@@ -155,9 +159,14 @@ function page() {
 
                 <h1 className=" font-black z-30 text-2xl md:py-10 py-5 bg-gradient-to-br from-orange-300 via-orange-700 to-transparent bg-clip-text text-transparent">SPARK</h1>
 
-                <p className="text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] border-orange-500">Start a new chat</p>
+                <div className={`w-[80%] ${option === '' ? "block" : "hidden"} md:w-[60%] flex flex-col lg:flex-row justify-center items-center h-auto mt-28 lg:mt-5 gap-4`}>
+                    <p className="w-auto px-4 py-1 lg:py-2 rounded-full bg-orange-400 text-white text-center cursor-pointer hover:opacity-75 duration-200 ease-in-out active:scale-95" onClick={() => setOption('programming')}>For Programming & File Structure</p>
+                    <p className="w-auto px-4 py-1 lg:py-2 rounded-full bg-orange-400 text-white text-center cursor-pointer hover:opacity-75 duration-200 ease-in-out active:scale-95" onClick={() => setOption('everyday')}>For Everyday Task</p>
+                </div>
 
-                <div className="w-[80%] md:w-[60%] z-30 h-auto flex flex-col justify-center items-center relative rounded-md lg:rounded-lg mt-5">
+                <p className={`text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] border-orange-500 ${option === 'programming' ? "block" : "hidden"}`}>For Programming & File Structure</p>
+
+                <div className={`${option === 'programming' ? "block" : "hidden"} w-[80%] md:w-[60%] z-30 h-auto flex flex-col justify-center items-center relative rounded-md lg:rounded-lg mt-5`}>
                     <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} placeholder="Enter your prompt" className="text-white outline-none w-full font-mono h-52 overflow-y-auto rounded-md lg:rounded-lg bg-zinc-900 px-3 pr-10 pb-10 py-3" />
                     <p className="text-white text-[12px] opacity-70 w-full text-center py-3">Or</p>
 
@@ -173,8 +182,24 @@ function page() {
                     </div>
                 </div>
 
-                <div className="w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3">
+                <div className={` ${option === 'programming' ? "block" : "hidden"} w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3`}>
                     {homeSuggestionPrompt.map((p, index) => {
+                        return <p onClick={() => setPrompt(p)} key={index} className="w-auto text-[12px] px-3 py-1 rounded-full bg-zinc-900 text-gray-400 hover:text-white cursor-pointer duration-200 ease-in-out active:scale-95">{p}</p>
+                    })}
+                </div>
+
+                <p className={`text-white z-30 text-sm md:text-lg md:py-2 w-auto px-8 text-center py-4 border-b-[1px] border-orange-500 mt-5 ${option === 'everyday' ? "block" : "hidden"}`}>For Everyday Tasks</p>
+                <div className={`w-[80%] md:w-[60%] z-30 h-auto flex flex-col justify-center items-center relative rounded-md lg:rounded-lg mt-5 ${option === 'everyday' ? "block" : "hidden"}`}>
+                    <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} placeholder="Enter your task" className="text-white outline-none w-full font-mono h-52 overflow-y-auto rounded-md lg:rounded-lg bg-zinc-900 px-3 pr-10 pb-10 py-3" />
+                    <p className="text-white text-[12px] opacity-70 w-full text-center py-3">Or</p>
+
+                    <span className={`p-2 lg:p-3 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 right-3 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`} onClick={handleSubmit}><IoSparklesSharp /></span>
+                    <span className={`p-2 lg:p-3 ${listening ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-fuchsia-400 text-white`} onClick={startRecording}><MdKeyboardVoice /></span>
+                    <span className={`p-2 lg:p-3 ${listening ? "block" : "hidden"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-red-500 text-white`} onClick={stopRecording}><FaRegStopCircle /></span>
+                </div>
+
+                <div className={`w-[80%] md:w-[60%] flex flex-wrap justify-center items-start gap-3 ${option === 'everyday' ? "block" : "hidden"}`}>
+                    {homeSuggestionTasks.map((p, index) => {
                         return <p onClick={() => setPrompt(p)} key={index} className="w-auto text-[12px] px-3 py-1 rounded-full bg-zinc-900 text-gray-400 hover:text-white cursor-pointer duration-200 ease-in-out active:scale-95">{p}</p>
                     })}
                 </div>
