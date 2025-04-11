@@ -22,10 +22,17 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
     const router = useRouter();
     const searchParams = useSearchParams();
     const template = searchParams.get('template');
+    const[loaded, setLoaded] = useState(false);
+
+    useEffect(()=> {
+       setTimeout(()=> {
+        setLoaded(true);
+       }, 2000);
+    }, []);
 
     return (
         <>
-            <div className="w-full min-h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative scrollbar-hide">
+            <div className={`${loaded ? "block" : "hidden"} w-full min-h-screen flex flex-col justify-start overflow-hidden items-center gap-3 bg-black relative scrollbar-hide`}>
                 <div className="h-56 w-56 lg:h-72 lg:w-[500px] absolute z-10 -top-24 -right-20 lg:-top-56 lg:-right-16 opacity-40 rounded-full bg-orange-400 blur-[120px]"></div>
 
                 <h1 className=" font-black z-30 text-2xl md:py-10 py-5 bg-gradient-to-br from-orange-300 via-orange-700 to-transparent bg-clip-text text-transparent">SPARK</h1>
@@ -40,7 +47,7 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
 
                     <div className="w-full h-full flex flex-col z-50 lg:pr-4 scrollbar-hide">
 
-                        <div className="w-full flex justify-start items-start gap-3 px-4 py-3 rounded-md bg-zinc-950">
+                        <div className={`w-full flex justify-start items-start gap-3 px-4 py-3 rounded-md bg-zinc-950`}>
                             <span onClick={() => setOption('chat')} className={` text-[12px] md:text-sm px-3 py-1 rounded-full lg:hidden cursor-pointer duration-200 ease-in-out border-[1px] ${option === 'chat' ? "border-2 border-emerald-600 bg-emerald-300 text-black" : "text-white border-zinc-700 bg-black"}`}>Chat</span>
                             <span onClick={() => setOption('files')} className={` text-[12px] lg:hidden md:text-sm px-3 py-1 rounded-full cursor-pointer duration-200 ease-in-out border-[1px] ${option === 'files' ? "border-2 border-emerald-600 bg-emerald-300 text-black" : "text-white border-zinc-700 bg-black"}`}>Files</span>
                             <span onClick={() => setOption('code')} className={` text-[12px] md:text-sm px-3 py-1 rounded-full lg:hidden cursor-pointer duration-200 ease-in-out border-[1px] ${option === 'code' ? "border-2 border-emerald-600 bg-emerald-300 text-black" : "text-white border-zinc-700 bg-black"}`}>Code</span>
@@ -53,8 +60,8 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
 
                         </div>}
 
-                        <div className={`w-full h-full scrollbar-hide ${option === 'chat' ? "hidden" : "block"}`}>
-                            <SandpackProvider theme={'dark'} template="react">
+                        <div className={` w-full h-full scrollbar-hide ${option === 'chat' ? "hidden" : "block"}`}>
+                            <SandpackProvider theme={'dark'}>
                                 <SandpackLayout className="h-[80vh] lg:h-[70vh] w-full lex flex-col scrollbar-hide">
                                     {option === 'code' && <SandpackCodeEditor className={`h-full w-full`} showInlineErrors showTabs closableTabs showLineNumbers={true} />}
                                     {option === 'preview' && <SandpackPreview className={`h-full w-full`} />}
@@ -71,7 +78,21 @@ export default function Page({ params, }: { params: Promise<{ chatId: string }> 
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div className={`${loaded ? "hidden" : "block"} overflow-hidden px-4 h-screen w-full flex flex-col lg:flex-row justify-start lg:justify-center py-4 items-center gap-5 bg-black`}>
+              <div className="lg:hidden w-full h-auto flex flex-col justify-start items-center gap-3">
+                 <div className="bg-zinc-900 w-full h-96 rounded-md lg:rounded-lg"></div>
+                 <div className="bg-zinc-900 w-full h-10 rounded-md lg:rounded-lg"></div>
+                 <div className="bg-zinc-900 w-full h-64 rounded-md lg:rounded-lg"></div>
+                 <div className="bg-zinc-900 w-full h-32 rounded-md lg:rounded-lg"></div>
+                 <div className="bg-zinc-900 w-full h-32 rounded-md lg:rounded-lg"></div>
+              </div>
+
+              <div className="hidden lg:flex w-full h-auto flex-row justify-start items-center gap-3">
+                 <div className="bg-zinc-900 w-[30%] h-[90vh] rounded-md lg:rounded-lg"></div>
+                 <div className="bg-zinc-900 w-[70%] h-[90vh] rounded-md lg:rounded-lg"></div>
+              </div>
             </div>
         </>
     )
