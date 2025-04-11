@@ -16,7 +16,13 @@ export async function middleware(req: NextRequest) {
         const { payload } = await jwtVerify(token, secret);
         //console.log('Decoded payload:', payload);
 
-        return NextResponse.next();
+        const userId = payload.id as string;
+        //console.log(userId);
+
+        const response = NextResponse.next();
+        response.headers.set("userId" ,userId);
+
+        return response;
     } catch (err) {
         console.log(err);
         return NextResponse.redirect(new URL('/unauthorize', req.url));
