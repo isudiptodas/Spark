@@ -39,7 +39,7 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
 
                 <div className="w-full h-full px-2 py-3 lg:py-0 lg:-mt-5 flex flex-col lg:flex-row-reverse justify-between items-center lg:items-start gap-3 overflow-hidden scrollbar-hide">
 
-                    <div className="flex bg-gradient-to-b from-zinc-950 via-zinc-950 to-transparent to-transparent h-[73%] overflow-y-auto lg:h-[77vh] rounded-md w-full lg:w-[70%] flex-col justify-between items-center gap-3 px-3 py-2 relative">
+                    <div className="flex bg-gradient-to-b from-zinc-950 via-zinc-950 to-transparent h-[73%] overflow-y-auto lg:h-[77vh] rounded-md w-full lg:w-[70%] flex-col justify-between items-center gap-3 px-3 py-2 relative">
                    
                     </div>
                     <div className=" flex bg-gradient-to-b from-zinc-950 via-zinc-950 to-transparent h-auto lg:h-[77vh] rounded-md w-full lg:w-[30%] flex-col justify-start lg:justify-between items-center gap-3 px-3 py-2 relative">
