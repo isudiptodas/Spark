@@ -67,11 +67,11 @@ export async function POST(req: NextRequest) {
             actual: parsed.actual,
             taskHistory: [
                 { role: 'user', message: prompt },
-                { role: 'gemini', message: parsed.taskResponse }
+                { role: 'model', message: parsed.taskResponse }
             ],
             taskExplanation: [
                 { role: 'user', message: prompt },
-                { role: 'gemini', message: explanation }
+                { role: 'model', message: explanation }
             ],
             userId,
             initialPrompt: prompt
@@ -104,6 +104,9 @@ export async function PUT(req: NextRequest){
         const api = process.env.GEMINI_API as string;
         const genAI = new GoogleGenerativeAI(api);
 
+        const fetchTask = await Task.findById(id);
+        const taskHistory = fetchTask.taskHistory as { role: string; message: string}[];
+
         const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash",
         });
@@ -120,23 +123,15 @@ export async function PUT(req: NextRequest){
 
         const chatSession = model.startChat({
             generationConfig,
-            history: [
-            ],
+            history: taskHistory.map((task) => ({
+                role: task.role,
+                parts: [{text: task.message}]
+            })),
         });
 
         const add = process.env.TASK_PROMPT as string;
 
-        const history = await Task.findById(id);
-        //const hist = JSON.stringify(history.taskHistory);
-        const actHist = history.taskHistory as {role: string; message: string}[];
-
-        const formattedHistory = actHist.map(entry => {
-            return `${entry.role === 'user' ? 'User' : 'Gemini'}: ${entry.message}`;
-          }).join('\n');
-
-         //console.log(formattedHistory);
-
-        const result = await chatSession.sendMessage(`Main internal prompt - ${add}. History - ${formattedHistory}. Now here is the task - ${prompt}`);
+        const result = await chatSession.sendMessage(`Main internal prompt - ${add}. Now here is the task - ${prompt}`);
 
         const resp = result.response.text();
         const parsed = JSON.parse(resp);
@@ -149,14 +144,14 @@ export async function PUT(req: NextRequest){
             role: 'user', message: prompt
         };
         const newTaskExplanation2 = {
-            role: 'gemini', message: explanation
+            role: 'model', message: explanation
         };
 
         const newTaskHistory = {
             role: 'user', message: prompt
         };
         const newTaskHistory2 = {
-            role: 'gemini', message: parsed.taskResponse
+            role: 'model', message: parsed.taskResponse
         };
 
         const found = await Task.findByIdAndUpdate(id, {
@@ -176,6 +171,36 @@ export async function PUT(req: NextRequest){
         return NextResponse.json({
             success: false,
             status: 500,
+        });
+    }
+}
+
+export async function GET(req: NextRequest){
+    const token = req.cookies.get('token')?.value as string;
+
+    try {
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        const userId = payload.id as string;
+
+        const found = await Task.find({userId});
+
+        if(!found){
+            return NextResponse.json({
+                status: 404,
+                success: false
+            });
+        }
+
+        return NextResponse.json({
+            status: 200,
+            success: true,
+            found
+        });
+    } catch (err) {
+        return NextResponse.json({
+            status: 500,
+            success: false
         });
     }
 }
