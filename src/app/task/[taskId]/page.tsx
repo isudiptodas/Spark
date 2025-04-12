@@ -10,7 +10,7 @@ import axios from "axios";
 import Markdown from 'react-markdown'
 
 interface data {
-    task : string,
+    task: string,
     taskExplanation: [{}],
     actual: string
 }
@@ -25,14 +25,14 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
     const { taskId } = use(params);
     const question = decodeURIComponent(taskId);
     const [prompt, setPrompt] = useState('');
-    const[actual, setActual] = useState('');
+    const [actual, setActual] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
     const [loaded, setLoaded] = useState(false);
     const [generating, setGenerating] = useState(false);
-    const[data, setData] = useState<data>();
-    const[convo, setConvo] = useState<convo[]>([]);
-    const[chatId, setChatId] = useState('');
+    const [data, setData] = useState<data>();
+    const [convo, setConvo] = useState<convo[]>([]);
+    const [chatId, setChatId] = useState('');
 
     const generate = async () => {
 
@@ -46,14 +46,14 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
             //console.log(res.data.newTask);
             setConvo(res.data.newTask.taskExplanation);
             //const parsed = JSON.parse(res.data.response);
-           // console.log(parsed);
-           setChatId(res.data.newTask._id);
-           const text = JSON.stringify(res.data.newTask.actual);
-           setActual(text);
+            // console.log(parsed);
+            setChatId(res.data.newTask._id);
+            const text = JSON.stringify(res.data.newTask.actual);
+            setActual(text);
         } catch (err) {
             console.log(err);
         }
-        finally{
+        finally {
             setGenerating(false);
         }
     }
@@ -72,13 +72,13 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
             //console.log(res.data.newTask);
             setConvo(res.data.newTask.taskExplanation);
             const text = JSON.stringify(res.data.newTask.actual);
-           setActual(text);
+            setActual(text);
             //const parsed = JSON.parse(res.data.response);
-           // console.log(parsed);
+            // console.log(parsed);
         } catch (err) {
             console.log(err);
         }
-        finally{
+        finally {
             setGenerating(false);
         }
     }
@@ -103,10 +103,12 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
 
                     <div className="flex text-[12px] lg:text-sm px-5 py-5 bg-gradient-to-b text-white from-zinc-950 via-zinc-950 to-transparent h-[73%] overflow-y-auto lg:h-[77vh] rounded-md w-full lg:w-[70%] flex-col justify-start items-center gap-3 relative">
                         <div className={`absolute z-50 bg-black opacity-80 top-0 rounded-md h-full w-full ${generating ? "block" : "hidden"} flex justify-center items-center text-white`}>Refreshing your response...</div>
-                        <Markdown>
-                            {/* {data?.actual} */}
-                            {actual}
-                        </Markdown>
+                        <p className={`${actual === '' ? "hidden" : "block"} w-full lg:text-sm text-start overflow-y-auto content font-sans`}>
+                            <Markdown>
+                                {/* {data?.actual} */}
+                                {actual}
+                            </Markdown>
+                        </p>
                     </div>
 
                     <div className=" flex bg-gradient-to-b from-zinc-950 via-zinc-950 to-transparent h-96 lg:h-[77vh] rounded-md w-full lg:w-[30%] flex-col justify-start lg:justify-between items-center gap-3 px-3 py-2 relative">
@@ -119,7 +121,7 @@ export default function Page({ params, }: { params: Promise<{ taskId: string }> 
                             })}
                         </div>
 
-                        <textarea onChange={(e) => setPrompt(e.target.value)} className="w-full px-2 py-2 outline-none h-14 lg:h-24 bg-zinc-800 rounded-md text-white" placeholder="Ask your question" value={prompt}/>
+                        <textarea onChange={(e) => setPrompt(e.target.value)} className="w-full px-2 py-2 outline-none h-14 lg:h-24 bg-zinc-800 rounded-md text-white" placeholder="Ask your question" value={prompt} />
                         <span className={`p-2 ${prompt === '' ? "hidden" : "block"} rounded-md cursor-pointer text-sm bottom-5 right-5 duration-200 ease-in-out active:scale-95 absolute bg-orange-400 text-white`} onClick={answer}><IoSparklesSharp /></span>
                     </div>
                 </div>
