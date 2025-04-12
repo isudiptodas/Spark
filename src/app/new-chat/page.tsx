@@ -3,7 +3,7 @@
 import { homeSuggestionPrompt } from "@/data/homeSuggestion"
 import { homeSuggestionTasks } from "@/data/homeSuggestion";
 import { IoSparklesSharp } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSidebar } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
@@ -20,14 +20,22 @@ import { FaVuejs } from "react-icons/fa";
 import { SiSvelte } from "react-icons/si";
 
 function page() {
-  
+
     type SpeechRecognition = any;
 
+    interface tasks {
+        task: string,
+        _id: string
+    }
+
     const [prompt, setPrompt] = useState('');
-    const[option, setOption] = useState('');
+    const [option, setOption] = useState('');
+    const[category, setCategory] = useState('task');
     const [template, setTemplate] = useState('select template');
     const router = useRouter();
-    const [sidebarVisible, setSidebarVisible] = useState(false);
+    const[taskData, setTaskData] = useState<tasks[]>([]);
+    const[filesData, setFilesData] = useState([]);
+    const [sidebarVisible, setSidebarVisible] = useState(true);
     const [templateVisible, setTemplateVisible] = useState(false);
     const [listening, setListening] = useState(false);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -99,30 +107,30 @@ function page() {
 
     const stopRecording = () => {
         if (recognitionRef.current) {
-          recognitionRef.current.stop();
-          setListening(false);
+            recognitionRef.current.stop();
+            setListening(false);
         }
-      };
+    };
 
     const handleSubmit = async () => {
 
-        if(option === 'programming' && template === 'select template'){
+        if (option === 'programming' && template === 'select template') {
             toast.error("Please select a template");
             return;
         }
 
-        if(!prompt){
+        if (!prompt) {
             toast.error("Please write a prompt");
             return;
         }
 
         try {
-            
-            if(option === 'programming'){
+
+            if (option === 'programming') {
                 const chatId = encodeURIComponent(prompt);
                 router.push(`/chat/${chatId}?template=${template}`);
             }
-            else{
+            else {
                 const taskId = encodeURIComponent(prompt);
                 router.push(`/task/${taskId}`);
             }
@@ -134,10 +142,29 @@ function page() {
     const logout = async () => {
         const res = await axios.get('/api/user');
 
-        if(res.data.status === 200){
+        if (res.data.status === 200) {
             router.push('/');
         }
     }
+
+    const fetchHistory = async () => {
+        try {
+            const res = await axios.get('/api/gemini');
+
+            //console.log(res.data);
+            setTaskData(res.data.found);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const redirect = (id: string) => {
+        router.push(`/history/task/${id}`);
+    }
+
+    useEffect(()=> {
+        fetchHistory();
+    }, []);
 
     return (
         <>
@@ -148,8 +175,15 @@ function page() {
                 <div className={`w-[70%] px-5 ${sidebarVisible ? "translate-x-0" : "-translate-x-full"} lg:pb-5 duration-200 ease-in-out transition-transform left-0 sm:w-[50%] md:w-[40%] lg:w-[20%] absolute h-screen bg-zinc-950 z-50 flex flex-col justify-start items-start gap-2`}>
                     <span onClick={() => setSidebarVisible(!sidebarVisible)} className={` text-white w-full text-center font-bold flex justify-start items-center py-5 cursor-pointer tracking-wider gap-3`}><FiSidebar /> SPARK </span>
 
-                    <div className="w-full py-2 h-[80%]">
+                    <div className="w-full py-2 px-3 h-[80%] border-2 flex flex-col justify-start items-start gap-2 overflow-y-auto content">
+                        <div className="w-full bg-transparent mb-2 flex justify-center items-center gap-2">
+                            <p className={`w-full rounded-md ${category === 'task' ? "bg-blue-500" : "border-[0.5px] border-blue-500"} active:scale-95 text-white text-[12px] cursor-pointer hover:opacity-75 duration-100 ease-in-out text-center py-2`} onClick={() => setCategory('task')}>Task</p>
+                            <p className={`w-full rounded-md ${category === 'files' ? "bg-blue-500" : "border-[0.5px] border-blue-500"} active:scale-95 text-white text-[12px] cursor-pointer hover:opacity-75 duration-100 ease-in-out text-center py-2`} onClick={() => setCategory('files')}>Files</p>
+                        </div>
 
+                        {category === 'task' && taskData.map((task, index)=> {
+                            return <p key={index} className="w-full px-3 rounded-md text-[12px] text-start flex justify-start items-start text-gray-400 hover:text-white duration-150 ease-in-out cursor-pointer bg-zinc-800 py-2" onClick={() => redirect(task._id)}>{task?.task}</p>
+                        })}
                     </div>
 
                     <span className="w-full mt-4 lg:mt-2 font-bold flex justify-start items-center gap-2 text-red-500 cursor-pointer" onClick={logout}><CiLogout />Logout</span>
@@ -176,8 +210,8 @@ function page() {
                     <span className={`p-2 lg:p-3 ${listening ? "block" : "hidden"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-red-500 text-white`} onClick={stopRecording}><FaRegStopCircle /></span>
 
                     <div className={`w-52 ${templateVisible ? "block" : "hidden"} px-1 py-1 absolute flex flex-col lg:w-auto lg:flex-row justify-start items-start -bottom-64 lg:-bottom-4 right-0 h-auto bg-zinc-800 rounded-md`}>
-                        {templates.map((temp, index)=> {
-                            return <p key={index} className="w-full px-3 flex justify-start text-[12px] lg:text-sm items-center gap-2 text-white cursor-pointer py-2 hover:bg-gray-600 duration-200 ease-in-out text-start rounded-md" onClick={() => {setTemplate(temp.name); setTemplateVisible(!templateVisible)}}>{temp.icon}{temp.name}</p>
+                        {templates.map((temp, index) => {
+                            return <p key={index} className="w-full px-3 flex justify-start text-[12px] lg:text-sm items-center gap-2 text-white cursor-pointer py-2 hover:bg-gray-600 duration-200 ease-in-out text-start rounded-md" onClick={() => { setTemplate(temp.name); setTemplateVisible(!templateVisible) }}>{temp.icon}{temp.name}</p>
                         })}
                     </div>
                 </div>
