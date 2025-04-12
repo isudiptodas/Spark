@@ -17,12 +17,8 @@ export async function middleware(req: NextRequest) {
         //console.log('Decoded payload:', payload);
 
         const userId = payload.id as string;
-        //console.log(userId);
 
-        const response = NextResponse.next();
-        response.headers.set("userId" ,userId);
-
-        return response;
+        return NextResponse.next();
     } catch (err) {
         console.log(err);
         return NextResponse.redirect(new URL('/unauthorize', req.url));
