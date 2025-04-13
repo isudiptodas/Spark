@@ -18,6 +18,9 @@ import { IoLogoHtml5 } from "react-icons/io5";
 import { FaJs } from "react-icons/fa";
 import { FaVuejs } from "react-icons/fa";
 import { SiSvelte } from "react-icons/si";
+import { BiLogoDjango } from "react-icons/bi";
+import { SiSpringboot } from "react-icons/si";
+import { RiNextjsFill } from "react-icons/ri";
 
 function page() {
 
@@ -35,7 +38,7 @@ function page() {
     const router = useRouter();
     const[taskData, setTaskData] = useState<tasks[]>([]);
     const[filesData, setFilesData] = useState([]);
-    const [sidebarVisible, setSidebarVisible] = useState(true);
+    const [sidebarVisible, setSidebarVisible] = useState(false);
     const [templateVisible, setTemplateVisible] = useState(false);
     const [listening, setListening] = useState(false);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -46,7 +49,7 @@ function page() {
             icon: <FaReact />
         },
         {
-            name: 'static',
+            name: 'html',
             icon: <IoLogoHtml5 />
         },
         {
@@ -62,12 +65,24 @@ function page() {
             icon: <SiSvelte />
         },
         {
-            name: 'vanilla',
+            name: 'Js',
             icon: <FaJs />
         },
         {
             name: 'vue',
             icon: <FaVuejs />
+        },
+        {
+            name: 'django',
+            icon: <BiLogoDjango  />
+        },
+        {
+            name: 'Spring',
+            icon: <SiSpringboot  />
+        },
+        {
+            name: 'Next.js',
+            icon: <RiNextjsFill   />
         },
     ];
 
@@ -209,7 +224,7 @@ function page() {
                     <span className={`p-2 lg:p-3 ${listening ? "hidden" : "block"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-fuchsia-400 text-white`} onClick={startRecording}><MdKeyboardVoice /></span>
                     <span className={`p-2 lg:p-3 ${listening ? "block" : "hidden"} rounded-md cursor-pointer text-[12px] lg:text-sm bottom-14 ${prompt === '' ? "right-3" : "right-14"} duration-200 ease-in-out active:scale-95 absolute bg-red-500 text-white`} onClick={stopRecording}><FaRegStopCircle /></span>
 
-                    <div className={`w-52 ${templateVisible ? "block" : "hidden"} px-1 py-1 absolute flex flex-col lg:w-auto lg:flex-row justify-start items-start -bottom-64 lg:-bottom-4 right-0 h-auto bg-zinc-800 rounded-md`}>
+                    <div className={`w-52 lg:w-72 overflow-y-auto ${templateVisible ? "block" : "hidden"} px-1 py-1 absolute flex flex-col lg:overflow-y-hidden lg:overflow-x-auto lg:flex-row justify-start items-start lg:items-center -bottom-36 lg:-bottom-4 content right-0 h-44 lg:h-auto bg-zinc-800 rounded-md`}>
                         {templates.map((temp, index) => {
                             return <p key={index} className="w-full px-3 flex justify-start text-[12px] lg:text-sm items-center gap-2 text-white cursor-pointer py-2 hover:bg-gray-600 duration-200 ease-in-out text-start rounded-md" onClick={() => { setTemplate(temp.name); setTemplateVisible(!templateVisible) }}>{temp.icon}{temp.name}</p>
                         })}
